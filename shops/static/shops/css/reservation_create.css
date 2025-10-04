@@ -1,0 +1,106 @@
+/* ساده برای قابل کلیک بودن سلول‌ها */
+.my-calendar {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.my-calendar th,
+.my-calendar td {
+  padding: 8px;
+  border: 1px solid #eee;
+}
+
+.my-calendar td.cal-empty {
+  background: #fafafa;
+}
+
+.my-calendar td.cal-day {
+  cursor: pointer;
+  user-select: none;
+}
+
+.my-calendar td.cal-day:hover {
+  background: #f0f8ff;
+}
+
+.my-calendar td.selected {
+  background: #007bff;
+  color: #fff;
+}
+
+.my-calendar td.today {
+  outline: 2px solid #ff9800;
+}
+
+.my-calendar td.has-schedule::after {
+  content: "•";
+  display: block;
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.calendar-title {
+  margin: 0;
+}
+
+.btn-nav {
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #efefef;
+  color: #333;
+}
+
+.calendar-card {
+  overflow-x: auto;
+  /* اضافه می‌کنه اسکرول افقی در موبایل */
+}
+
+.my-calendar {
+  width: 100%;
+  min-width: 400px;
+  /* جدول همیشه حداقل این عرض رو داشته باشه */
+  border-collapse: collapse;
+  text-align: center;
+}
+
+@media (max-width: 576px) {
+
+  .my-calendar th,
+  .my-calendar td {
+    min-width: 38px;
+    /* کوچیک‌تر کردن هر سلول */
+    height: 44px;
+    font-size: 12px;
+    padding: 3px;
+  }
+
+  .calendar-title {
+    font-size: 0.9rem;
+  }
+
+  .day-number {
+    font-size: 12px;
+    padding: 2px 4px;
+  }
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calendar-title {
+  flex: 1;
+  text-align: center;
+}

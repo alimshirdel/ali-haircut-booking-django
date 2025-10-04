@@ -1,0 +1,14 @@
+# Python bytecode files
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Django specific
+*.sqlite3
+db.sqlite3
+media/
+
+# .env file with sensitive information
+.env

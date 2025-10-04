@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <title>
+    {% block title %}
+    {% endblock %}
+  </title>
+  <head>
+    {% include 'base/header_ref.html' %}
+    {% block links %}
+    {% endblock %}
+  </head> <body>
+    {% include 'base/svg.html' %}
+    {% include 'base/header.html' %}
+
+    <main>
+      {% block content %}
+      {% endblock %}
+    </main>
+    {% include 'base/footer.html' %}
+    {% include 'base/footer_ref.html' %}
+    <style>
+      body {
+        font-family: 'Vazir', sans-serif;
+        direction: rtl; /* راست به چپ */
+        text-align: right; /* متن راست‌چین */
+      }
+    </style>
+
+    {% block scripts %}
+    {% endblock %}
+  </body>
+</html>

@@ -1,0 +1,341 @@
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: #ecf0f3;
+    min-height: 100vh;
+  }
+
+  /* کارت اصلی جزئیات */
+  .shop-detail-card {
+    max-width: 800px;
+    margin: 3rem auto;
+    background: #fff;
+    border-radius: 25px;
+    box-shadow: 9px 9px 16px #d1d9e6,
+      -9px -9px 16px #fff;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .shop-detail-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .shop-detail-card img {
+    width: 100%;
+    height: 350px;
+    object-fit: contain;
+    background: #f0f0f0;
+    padding: 10px;
+  }
+
+  .shop-detail-body {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .shop-detail-body h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  .shop-detail-body p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+  }
+
+  /* دکمه‌ها */
+  .btn-custom {
+    border-radius: 30px;
+    padding: 0.6rem 1.8rem;
+    font-size: 1rem;
+    border: none;
+    color: #fff;
+    background: linear-gradient(135deg, rgb(17, 203, 203), #2575fc);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .btn-custom:hover {
+    background: linear-gradient(135deg, #2575fc, rgb(203, 197, 17));
+    transform: translateY(-2px);
+  }
+
+  .btn-edit {
+    border-radius: 30px;
+    padding: 0.6rem 1.8rem;
+    font-size: 1rem;
+    border: none;
+    color: #fff;
+    background: linear-gradient(135deg, rgb(183, 255, 0), rgb(17, 9, 238));
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .btn-edit:hover {
+    background: linear-gradient(135deg, rgb(9, 238, 51), #ff6a00);
+    transform: translateY(-2px);
+  }
+
+  .btn-delete {
+    border-radius: 30px;
+    padding: 0.6rem 1.8rem;
+    font-size: 1rem;
+    border: none;
+    color: #fff;
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    /* قرمز-صورتی */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s ease;
+  }
+
+  .btn-delete:hover {
+    background: linear-gradient(135deg, #ff4b2b, rgb(255, 0, 60));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  }
+
+  /* جایگزین برای .btn-back — خط (underline/border) کاملاً حذف می‌شود */
+  .btn-back {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    border-radius: 30px;
+    padding: 0.5rem 1.4rem;
+    border: none !important;
+    /* اگر به صورت پیش‌فرض border داشته باشه حذف می‌کنه */
+    color: #2575fc;
+    background: transparent;
+    text-decoration: none !important;
+    /* این خط زیر لینک رو حذف می‌کنه */
+    box-shadow: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* هاور ملایم بدون خط */
+  .btn-back:hover {
+    background: rgba(37, 117, 252, 0.08);
+    text-decoration: none !important;
+  }
+
+  /* حذف هرگونه outline یا shadow هنگام فوکوس/کلیک */
+  .btn-back:focus,
+  .btn-back:active {
+    outline: none;
+    box-shadow: none;
+    text-decoration: none !important;
+  }
+
+  .btn-slot {
+    padding: 5px 10px;
+    border: 1px solid #333;
+    background-color: #fff;
+    cursor: pointer;
+    margin: 2px;
+  }
+
+  .btn-slot:hover {
+    background-color: #ddd;
+  }
+
+  .btn-slot.booked {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .messages {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+
+  .messages li {
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+  }
+
+  .messages li.success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .messages li.error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  .btn-route {
+    display: inline-flex;
+    /* برای آیکون و متن کنار هم */
+    align-items: center;
+    gap: 6px;
+    /* فاصله بین آیکون و متن */
+    padding: 0.6rem 1.5rem;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #17cbbc, #2575fc);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15),
+      -4px -4px 10px rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .btn-route:hover {
+    background: linear-gradient(135deg, #2575fc, #17cbbc);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.25),
+      -6px -6px 15px rgba(255, 255, 255, 0.3);
+  }
+
+  .btn-route:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2),
+      -2px -2px 6px rgba(255, 255, 255, 0.2);
+  }
+
+  /* آیکون داخل دکمه */
+  .btn-route i {
+    font-size: 1.1rem;
+  }
+
+  /* Responsive برای موبایل */
+  @media (max-width: 576px) {
+    .btn-route {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .calendar-card {
+    max-width: 520px;
+    margin: 18px 0;
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .calendar-title {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .btn-nav {
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: #f5f5f5;
+    color: #333;
+  }
+
+  .my-calendar {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  .my-calendar th {
+    padding: 8px 6px;
+    background: #fafafa;
+    font-weight: 600;
+  }
+
+  .my-calendar td {
+    height: 56px;
+    vertical-align: top;
+    border: 1px solid #eee;
+    cursor: pointer;
+    padding: 6px;
+  }
+
+  .my-calendar td.cal-empty {
+    background: transparent;
+    cursor: default;
+  }
+
+  .day-number {
+    font-weight: 700;
+    display: inline-block;
+    padding: 4px 6px;
+    border-radius: 6px;
+  }
+
+  .my-calendar td.has-schedule {
+    background: #fff7f0;
+  }
+
+  /* روزی که برنامه داره */
+  .my-calendar td.today .day-number {
+    background: #ffefc6;
+  }
+
+  .my-calendar td.selected {
+    outline: 3px solid #ffd6a5;
+  }
+
+  .my-calendar td:hover {
+    background: #fffaf2;
+  }
+
+  .calendar-card {
+    overflow-x: auto;
+    /* اضافه می‌کنه اسکرول افقی در موبایل */
+  }
+
+  .my-calendar {
+    width: 100%;
+    min-width: 400px;
+    /* جدول همیشه حداقل این عرض رو داشته باشه */
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  @media (max-width: 576px) {
+
+    .my-calendar th,
+    .my-calendar td {
+      min-width: 38px;
+      /* کوچیک‌تر کردن هر سلول */
+      height: 44px;
+      font-size: 12px;
+      padding: 3px;
+    }
+
+    .calendar-title {
+      font-size: 0.9rem;
+    }
+
+    .day-number {
+      font-size: 12px;
+      padding: 2px 4px;
+    }
+  }
+
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .calendar-title {
+    flex: 1;
+    text-align: center;
+  }

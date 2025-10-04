@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block links %}
+  <link rel="icon" href="{% static 'shops/icons/reservation_create.ico' %}" type="image/ico/jpg" />
+  <link rel="stylesheet" href="{% static 'shops/css/reservation_create.css' %}" />
+{% endblock %}
+{% block title %}
+  تنظیم ساعات کاری {{ shop.name }}
+{% endblock %}
+{% block content %}
+  <div class="container mt-4">
+    <h2 class="text-center mb-4">⚙️ تنظیم ساعت کاری برای {{ shop.name }}</h2>
+
+    <div class="card shadow-sm p-4">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+          {{ form.date.as_hidden }} {# hidden input #}
+          <label>انتخاب تاریخ (شمسی)</label>
+          {% include 'shops/calendar.html' %}
+        </div>
+        <div class="mb-3">{{ form.start_time.label_tag }}
+          {{ form.start_time }}</div>
+        <div class="mb-3">{{ form.end_time.label_tag }}
+          {{ form.end_time }}</div>
+
+        <div class="d-flex justify-content-between align-items-center">
+          <a href="{% url 'shops:reservation_list_url' shop.id %}" class="btn btn-secondary">⬅ بازگشت</a>
+          <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script src="{% static 'shops/javascript/reservation_create.js' %}"></script>
+{% endblock %}

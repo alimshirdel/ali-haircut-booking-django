@@ -1,0 +1,280 @@
+  /* فرم کانتینر */
+  .search-form {
+    position: relative;
+    width: 100%;
+    direction: rtl;
+    overflow: visible;
+    /* مهم برای دیدن wave و particles */
+    min-height: 60px;
+    /* ارتفاع کافی برای wave و particles */
+  }
+
+  /* اینپوت */
+  .search-input {
+    width: 100%;
+    padding: 12px 50px 12px 20px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    background: #fff;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+    text-align: right;
+    position: relative;
+    z-index: 3;
+    /* بالاتر از wave و particles */
+  }
+
+  .search-input:focus {
+    outline: none;
+    box-shadow: 0 6px 25px rgba(255, 107, 129, 0.4), inset 0 0 10px rgba(255, 107, 129, 0.3);
+    background: #fff0f5;
+  }
+
+  /* placeholder */
+  .search-input::placeholder {
+    color: #bbb;
+    font-style: italic;
+    transition: all 0.3s ease;
+  }
+
+  /* آیکون داخل input */
+  .search-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.3rem;
+    color: #ff6b81;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .search-input:focus+.search-icon {
+    color: #ff4757;
+  }
+
+  /* wave زیر input */
+  .wave {
+    position: absolute;
+    bottom: -2px;
+    /* کمی پایین‌تر از input */
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, #ff6b81, #ff4757, #ff6b81);
+    border-radius: 50px;
+    opacity: 0.3;
+    z-index: 1;
+    /* زیر input */
+    background-size: 200% 100%;
+    animation: waveIdle 3s linear infinite;
+  }
+
+  @keyframes waveIdle {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .wave.active {
+    opacity: 1;
+    animation: waveMove 1s linear infinite;
+  }
+
+  @keyframes waveMove {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* particles canvas */
+  .particles-canvas {
+    position: absolute;
+    bottom: -4px;
+    /* زیر input */
+    width: 100%;
+    height: 10px;
+    pointer-events: none;
+    z-index: 2;
+    /* بین wave و input */
+  }
+
+  /* افکت hover روی input */
+  .search-input:hover {
+    background: #fff7f9;
+  }
+
+  /* رقص آیکون */
+  @keyframes iconDance {
+    0% {
+      transform: translateY(-50%) rotate(0deg);
+    }
+
+    25% {
+      transform: translateY(-50%) rotate(15deg);
+    }
+
+    50% {
+      transform: translateY(-50%) rotate(-15deg);
+    }
+
+    75% {
+      transform: translateY(-50%) rotate(10deg);
+    }
+
+    100% {
+      transform: translateY(-50%) rotate(0deg);
+    }
+  }
+
+  /* Responsive */
+  @media(max-width:768px) {
+    .search-form {
+      width: 90%;
+    }
+  }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: #ecf0f3;
+    min-height: 100vh;
+  }
+
+  /* بخش خوش‌آمدگویی */
+  .hero-section {
+    background: #ecf0f3;
+    border-radius: 25px;
+    padding: 4rem 2rem;
+    margin: 3rem auto;
+    color: #333;
+    text-align: center;
+    box-shadow: 9px 9px 16px #d1d9e6,
+      -9px -9px 16px #fff;
+  }
+
+  .hero-section h1 {
+    font-size: 2.6rem;
+    font-weight: 700;
+  }
+
+  .hero-section p {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    opacity: 0.8;
+  }
+
+  /* کارت‌ها */
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 9px 9px 16px #d1d9e6,
+      -9px -9px 16px #fff;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+  }
+
+  .card img {
+    width: 100%;
+    height: 220px;
+    object-fit: contain;
+    /* کل عکس دیده میشه */
+    background: #f0f0f0;
+    /* پس‌زمینه ملایم */
+    padding: 5px;
+  }
+
+  .card-body {
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .card-body p {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  /* دکمه‌ها */
+  .btn-custom {
+    border-radius: 30px;
+    padding: 0.5rem 1.6rem;
+    font-size: 0.95rem;
+    border: none;
+    color: #fff;
+    background: linear-gradient(135deg, rgb(17, 203, 203), #2575fc);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .btn-custom:hover {
+    background: linear-gradient(135deg, #2575fc, rgb(203, 197, 17));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  }
+
+  .btn-edit {
+    border-radius: 30px;
+    padding: 0.5rem 1.6rem;
+    font-size: 0.95rem;
+    border: none;
+    color: #fff;
+    background: linear-gradient(135deg, #ff6a00, #ee0979);
+    /* نارنجی → صورتی */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .btn-edit:hover {
+    background: linear-gradient(135deg, #ee0979, #ff6a00);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  }
+
+  .btn-reserve {
+    border-radius: 30px;
+    padding: 0.5rem 1.6rem;
+    font-size: 0.95rem;
+    border: none;
+    color: #fff;
+    background: linear-gradient(135deg, #00ff40, #098bee);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .btn-reserve:hover {
+    background: linear-gradient(135deg, #cfee09, #0400ff);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  }
+
+  /* نوشته خالی */
+  .no-shop {
+    font-size: 1.1rem;
+    color: #666;
+    margin-top: 2rem;
+    text-align: center;
+  }

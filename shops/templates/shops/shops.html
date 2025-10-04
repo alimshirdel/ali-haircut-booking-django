@@ -1,0 +1,71 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+  مغازه ها
+{% endblock %}
+
+{% block links %}
+  <link rel="icon" href="{% static 'shops/icons/shop.ico' %}" type="image/ico/jpg" />
+  <link rel="stylesheet" href="{% static 'shops/css/shops.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <section class="container">
+    <div class="hero-section">
+      {% if request.user.is_authenticated %}
+        <h1>خوش آمدید ❤️</h1>
+        <p>هر آرایشگاهی که بخوای، در هر ساعت از روز می‌تونی رزرو کنی.</p>
+        <a href="{% url 'shops:create_url' %}" class="btn btn-custom mt-3">ثبت آرایشگاه</a>
+      {% else %}
+        <h1>خوش آمدید ❤️</h1>
+        <p>
+          می‌تونی هر آرایشگاهی که بخوای، در هر ساعت رزرو کنی.
+          <br />برای ثبت آرایشگاه و ویرایش یا رزرو وارد حساب بشو.
+        </p>
+        <div class="mt-3">
+          <a href="{% url 'accounts:login_url' %}" class="btn btn-custom me-2">ورود</a>
+          <a href="{% url 'accounts:register_url' %}" class="btn btn-edit">ثبت‌نام</a>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <div class="album pb-5">
+    <div class="container">
+      <!-- فیلد سرچ نهایی اصلاح شده -->
+      <div class="mb-4 d-flex justify-content-center">
+        <form method="GET" action="" class="search-form w-50 position-relative">
+          <input type="search" name="search" placeholder="جستجوی آرایشگاه..." value="{{ request.GET.search|default:'' }}" class="form-control search-input text-end" id="ultra-search" />
+          <span class="search-icon" id="search-icon">🔍</span>
+          <div class="wave" id="wave"></div>
+          <canvas id="particles" class="particles-canvas"></canvas>
+        </form>
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        {% for shop in shops %}
+          <div class="col">
+            <div class="card">
+              <a href="{% url 'shops:detail_url' shop.id %}"><img src="{{ shop.image.url }}" alt="{{ shop.name }}" /></a>
+              <div class="card-body">
+                <p class="card-text">{{ shop.name }}</p>
+                <div class="d-flex justify-content-center">
+                  <a href="{% url 'shops:detail_url' shop.id %}" class="btn btn-custom">بازدید</a>
+                  {% if request.user == shop.barber %}
+                    <a href="{% url 'shops:edit_url' shop.id %}" class="btn btn-edit ms-2">ویرایش</a>
+                    <a href="{% url 'shops:reservation_list_url' shop.id %}" class="btn btn-reserve ms-2">تایم کاری</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <p class="no-shop">هیچ آرایشگاهی ثبت نشده است 🙁</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script src="{% static 'shops/javascript/shops.js' %}" type="text/javascript"></script>
+{% endblock %}

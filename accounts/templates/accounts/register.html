@@ -1,0 +1,126 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+  ثبت‌نام حساب کاربری
+{% endblock %}
+
+{% block links %}
+  <link rel="icon" href="{% static 'accounts/icons/register.ico' %}" type="image/ico/jpg" />
+  <link rel="stylesheet" href="{% static 'accounts/css/register.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+{% endblock %}
+
+{% block content %}
+  <div class="login-page">
+    <!-- دکمه بازگشت -->
+    <a href="{% url 'shops:shops_url' %}" class="btn-back"><i class="fa-solid fa-arrow-left-long"></i> بازگشت</a>
+
+    <div class="login-card">
+      <h2>ثبت‌نام حساب کاربری</h2>
+
+      <!-- پیام‌های عمومی Django -->
+      {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <li class="message {{ message.tags }}">
+              <i class="fa {% if message.tags == 'success' %}
+                  
+                  fa-check-circle
+
+                {% else %}
+                  
+                  fa-info-circle
+
+                {% endif %}">
+
+              </i>
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <!-- ارورهای فرم کلی (non_field_errors) -->
+      {% if form.non_field_errors %}
+        <ul class="messages">
+          {% for error in form.non_field_errors %}
+            <li class="error-message">{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <!-- فرم ثبت‌نام / تایید OTP -->
+      <form method="POST" action="" novalidate>
+        {% csrf_token %}
+
+        {% if request.session.verification_code or redirect == True %}
+          <!-- مرحله دوم: ورود کد تایید -->
+          <p class="info-text">کد تایید برای شماره شما ارسال شد. لطفاً آن را وارد کنید:</p>
+          <div class="input-group">
+            <i class="fa-solid fa-shield-halved"></i>
+            {{ form.opt }}
+          </div>
+          {% for error in form.opt.errors %}
+            <p class="error-message">{{ error }}</p>
+          {% endfor %}
+
+          <button type="submit" class="btn-login">تایید کد</button>
+          <!-- دکمه ارسال مجدد + تایمر -->
+          <input type="hidden" id="user_phone" value="{{ request.session.user_phone }}" />
+          <button id="resend-btn" disabled>ارسال دوباره کد</button>
+          <span id="timer"></span>
+        {% else %}
+          <!-- مرحله اول: اطلاعات ثبت‌نام -->
+          {% for field in form %}
+            {% if field.name != 'opt' %}
+              <div class="input-group">
+                {% if field.name == 'first_name' %}
+                  <i class="fa-solid fa-user-pen"></i>
+                {% endif %}
+                {% if field.name == 'last_name' %}
+                  <i class="fa-solid fa-user-tag"></i>
+                {% endif %}
+                {% if field.name == 'username' %}
+                  <i class="fa-solid fa-user-astronaut"></i>
+                {% endif %}
+                {% if field.name == 'email' %}
+                  <i class="fa-solid fa-envelope-open-text"></i>
+                {% endif %}
+                {% if field.name == 'phone' %}
+                  <i class="fa-solid fa-square-phone-flip"></i>
+                {% endif %}
+                {% if field.name == 'password' or field.name == 'password_2' %}
+                  <i class="fa-solid fa-lock"></i>
+                {% endif %}
+                {{ field }}
+              </div>
+              {% for error in field.errors %}
+                <p class="error-message">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+
+          <button type="submit" class="btn-login">ارسال کد تایید به شماره تلفن</button>
+        {% endif %}
+      </form>
+
+      <div class="login-links">
+        <a href="{% url 'accounts:login_url' %}"><i class="fa fa-sign-in-alt"></i> ورود</a>
+        <a href="{% url 'accounts:forgot_password_url' %}"><i class="fa fa-user-lock"></i> فراموشی نام کاربری/رمز ورود</a>
+      </div>
+    </div>
+  </div>
+
+  {% if otp_success %}
+    <p class="success-message">ثبت‌نام موفقیت‌آمیز بود ✅ در حال ورود به سایت…</p>
+  {% endif %}
+
+  {% if redirect %}
+    <div id="redirect" data-url="{% url 'shops:shops_url' %}" style="display:none;"></div>
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'accounts/javascript/register.js' %}?v=30"></script>
+{% endblock %}

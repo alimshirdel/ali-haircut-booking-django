@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load jalali_extras %}
+
+{% block links %}
+  <link rel="icon" href="{% static 'shops/icons/reservation_list.ico' %}" type="image/ico/jpg" />
+{% endblock %}
+{% block title %}
+  ساعات کاری {{ shop.name }}
+{% endblock %}
+{% block content %}
+  <div class="container mt-4">
+    <h2 class="mb-4 text-center">🕒 ساعت‌های کاری {{ shop.name }}</h2>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered text-center align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>تاریخ</th>
+            <th>شروع</th>
+            <th>پایان</th>
+            <th>حذف زمان کاری</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sched in schedules %}
+            <tr>
+              <td>{{ sched.date|jalali }}</td>
+              <td>{{ sched.start_time }}</td>
+              <td>{{ sched.end_time }}</td>
+              <td>
+                <form method="post" action="{% url 'shops:reservation_delete_url' sched.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('آیا مطمئن هستید که می‌خواهید این زمان را حذف کنید؟')">🗑 حذف</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="3" class="text-muted">هیچ ساعتی تنظیم نشده ⛔</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-3">
+      <a href="{% url 'shops:reservation_create_url' shop.id %}" class="btn btn-success">➕ افزودن ساعت جدید</a>
+      <a href="{% url 'shops:shops_url' %}" class="btn btn-secondary">⬅ بازگشت</a>
+    </div>
+  </div>
+{% endblock %}

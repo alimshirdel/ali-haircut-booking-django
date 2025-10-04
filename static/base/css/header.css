@@ -1,0 +1,125 @@
+    /* لینک ورود بدون خط و هاور */
+    a.login-link {
+      text-decoration: none !important;
+      display: inline-flex;
+      align-items: center;
+      color: #fff;
+      transition: color 0.3s;
+    }
+
+    a.login-link:hover {
+      color: #ffd700;
+    }
+
+    a.login-link:hover .login-icon {
+      transform: rotate(20deg) scale(1.3);
+      transition: transform 0.3s;
+      stroke: #ffd700;
+    }
+
+    /* Navbar گرادیانت */
+    .navbar-fancy {
+      background: linear-gradient(90deg,rgb(43, 163, 255), #ff416c);
+      transition: background 1s ease-in-out;
+    }
+
+    .navbar-fancy:hover {
+      background: linear-gradient(90deg,rgba(255, 65, 233, 0.75),rgba(43, 244, 255, 0.45));
+    }
+
+    /* دکمه موبایل */
+    .navbar-toggler {
+      transition: transform 0.3s, color 0.3s;
+    }
+
+    .navbar-toggler:hover {
+      transform: rotate(90deg) scale(1.2);
+      color: #ffd700;
+    }
+
+    /* منوی کشویی فانتزی */
+    #navbarHeaderFancy {
+      transition: max-height 0.6s ease, opacity 0.6s ease;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+      background: linear-gradient(180deg, #6a11cb, #2575fc);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    #navbarHeaderFancy.show {
+      max-height: 600px;
+      opacity: 1;
+    }
+
+    .text-link-fancy {
+      color: #fff;
+      font-weight: 500;
+      transition: transform 0.3s, text-shadow 0.3s, color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem; /* فاصله بین آیکون و متن */
+    }
+    
+    .text-link-fancy .icon {
+      margin-right: 0; /* چون gap داریم، margin-right رو حذف کردیم */
+      transition: transform 0.4s, color 0.3s, text-shadow 0.3s;
+    }
+    
+    .text-link-fancy:hover {
+      color: #ffd700;
+      transform: translateX(6px) scale(1.05);
+      text-shadow: 0 0 8px #ffd700;
+    }
+    
+    .text-link-fancy:hover .icon {
+      transform: rotate(15deg) scale(1.3);
+      color: #ffd700;
+      text-shadow: 0 0 8px #ffd700;
+    }
+    /* پیام خوش‌آمدگویی وسط navbar */
+    .navbar-welcome {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      padding: 4px 12px;
+      display: flex;
+      align-items: center;
+      gap: 25px; /* فاصله بین متن و ایموجی‌ها */
+      font-size: 0.95rem;
+      min-width: 160px;
+      justify-content: center;
+    }
+    
+    /* ایموجی‌های پرواز داخل متن */
+    #super-flying-emojis {
+      position: relative;
+      width: 70px;
+      height: 24px;
+      overflow: visible;
+    }
+    
+    .emoji {
+      position: absolute;
+      font-size: 1.2em;
+      opacity: 0;
+      animation-fill-mode: forwards;
+      text-shadow: 0 0 6px rgba(255,255,255,0.8);
+    }
+    
+    @keyframes flyLeftToRight {
+      0% { transform: translateX(-50px) translateY(-5px) rotate(0deg); opacity: 0; } 
+      30% { opacity: 1; }
+      50% { transform: translateX(50%) translateY(-5px) rotate(15deg); }
+      70% { transform: translateX(80%) translateY(2px) rotate(-10deg); }
+      100% { transform: translateX(110%) translateY(-5px) rotate(360deg); opacity: 0; }
+    }
+    
+    @keyframes flyRightToLeft {
+      0% { transform: translateX(110%) translateY(-5px) rotate(0deg); opacity: 0; } 
+      30% { opacity: 1; }
+      50% { transform: translateX(50%) translateY(-5px) rotate(-15deg); }
+      70% { transform: translateX(20%) translateY(2px) rotate(10deg); }
+      100% { transform: translateX(-20px) translateY(-5px) rotate(-360deg); opacity: 0; }
+    }

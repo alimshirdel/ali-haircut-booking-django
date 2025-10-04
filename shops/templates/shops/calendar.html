@@ -1,0 +1,32 @@
+<div class="calendar-card">
+  <div class="calendar-header">
+    <a href="?jy={{ prev_jy }}&jm={{ prev_jm }}" class="btn-nav">▶</a>
+    <h3 class="calendar-title">{{ calendar_month_name }} {{ calendar_year }}</h3>
+    <a href="?jy={{ next_jy }}&jm={{ next_jm }}" class="btn-nav">◀</a>
+  </div>
+
+  <table class="my-calendar">
+    <thead>
+      <tr>
+        {% for wd in weekdays_fa %}
+          <th>{{ wd }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for week in calendar_weeks %}
+        <tr>
+          {% for day in week %}
+            {% if day %}
+              <td class="cal-day {% if day.has_schedule %}has-schedule{% endif %} {% if day.is_today %}today{% endif %} {% if selected_gregorian == day.gregorian_iso %}selected{% endif %}" data-date="{{ day.gregorian_iso }}">
+                <div class="day-number">{{ day.day_fa }}</div>
+              </td>
+            {% else %}
+              <td class="cal-empty"></td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

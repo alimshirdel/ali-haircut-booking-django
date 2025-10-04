@@ -1,0 +1,69 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+  ورود به حساب کاربری
+{% endblock %}
+
+{% block links %}
+  <link rel="icon" href="{% static 'accounts/icons/login.ico' %}" type="image/ico/jpg" />
+  <link rel="stylesheet" href="{% static 'accounts/css/login.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+{% endblock %}
+
+{% block content %}
+  <div class="login-page">
+    <div class="login-card">
+      <h2>ورود به حساب کاربری</h2>
+
+      <!-- پیام‌های عمومی -->
+      {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <li class="{{ message.tags }}">
+              <i class="fa fa-info-circle"></i> {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <form method="POST" action="" novalidate>
+        {% csrf_token %}
+
+        <div class="input-group">
+          <i class="fa fa-user"></i>
+          {{ form.username }}
+        </div>
+        {% for error in form.username.errors %}
+          <p class="error-message">{{ error }}</p>
+        {% endfor %}
+
+        <div class="input-group">
+          <i class="fa fa-lock"></i>
+          {{ form.password }}
+        </div>
+        {% for error in form.password.errors %}
+          <p class="error-message">{{ error }}</p>
+        {% endfor %}
+
+        <button type="submit" class="btn-login">ورود</button>
+      </form>
+
+      <div class="login-links">
+        <a href="{% url 'accounts:forgot_password_url' %}">فراموشی رمز</a>
+        <a href="{% url 'accounts:register_url' %}">ثبت‌نام</a>
+      </div>
+      <!-- دکمه بازگشت پایین سمت چپ -->
+      <a href="{% url 'shops:shops_url' %}" class="btn-back btn-back-bottom">⬅ بازگشت</a>
+    </div>
+  </div>
+
+  <!-- ریدایرکت 3 ثانیه‌ای بعد از ورود موفق -->
+  {% if redirect %}
+    <div id="redirect" data-url="{% url 'shops:shops_url' %}" style="display:none;"></div>
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'accounts/javascript/login.js' %}?v=4"></script>
+{% endblock %}

@@ -1,0 +1,28 @@
+  /* فلش دایره‌ای با رنگ خوشگل‌ */
+  .scroll-top {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6a11cb, #2575fc); /* آبی بنفش */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 15px rgba(38, 97, 255, 0.6) inset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  }
+
+  .scroll-top i {
+    font-size: 1.6rem;
+    color: white;
+    transition: transform 0.3s;
+  }
+
+  .scroll-top:hover {
+    transform: translateY(-5px) scale(1.3);
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(38, 97, 255, 0.8) inset;
+  }
+
+  .scroll-top:hover i {
+    transform: scale(1.2);
+  }

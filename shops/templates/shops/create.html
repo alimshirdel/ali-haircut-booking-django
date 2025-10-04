@@ -1,0 +1,92 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+  ثبت آرایشگاه جدید
+{% endblock %}
+
+{% block links %}
+  <link rel="icon" href="{% static 'shops/icons/shop.ico' %}" type="image/ico/jpg" />
+  <link rel="stylesheet" href="{% static 'shops/css/create.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+  <div class="shop-form-page">
+    <a href="{% url 'shops:shops_url' %}" class="btn-back"><i class="fa-solid fa-arrow-left-long"></i> بازگشت</a>
+
+    <div class="shop-form-card">
+      <h2>ثبت آرایشگاه جدید</h2>
+
+      {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <li class="message {{ message.tags }}">
+              <i class="fa {% if message.tags == 'success' %}
+                  fa-check-circle
+                {% else %}
+                  fa-info-circle
+                {% endif %}">
+
+              </i>
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="input-group">
+          <label for="{{ form.name.id_for_label }}">نام آرایشگاه:</label>
+          <i class="fa fa-store"></i>
+          {{ form.name }}
+        </div>
+
+        <div class="input-group">
+          <label for="{{ form.image.id_for_label }}">تصویر آرایشگاه:</label>
+          <i class="fa fa-image"></i>
+          {{ form.image }}
+        </div>
+
+        <div class="input-group">
+          <label for="{{ form.descriptions.id_for_label }}">توضیحات:</label>
+          <i class="fa fa-align-left"></i>
+          {{ form.descriptions }}
+        </div>
+
+        <div class="input-group">
+          <label for="{{ form.address.id_for_label }}">آدرس:</label>
+          <i class="fa fa-map-marker-alt"></i>
+          {{ form.address }}
+        </div>
+
+        <div class="input-group">
+          <label for="{{ form.create_date.id_for_label }}">تاریخ ایجاد:</label>
+          <i class="fa fa-calendar"></i>
+          {{ form.create_date }}
+        </div>
+
+        <!-- نقشه -->
+        <div id="map" style="height: 350px; margin: 20px 0; border-radius: 15px; box-shadow: 6px 6px 12px #d1d9e6, -6px -6px 12px #fff;"></div>
+
+        <div class="checkbox-group">
+          {{ form.is_show }} <label for="{{ form.is_show.id_for_label }}">نمایش در سایت</label>
+        </div>
+
+        <!-- فیلدهای مخفی مختصات -->
+        {{ form.latitude }}
+        {{ form.longitude }}
+
+        <button type="submit" class="btn-submit"><i class="fa fa-paper-plane"></i> ثبت آرایشگاه</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="{% static 'shops/javascript/create.js' %}" type="text/javascript"></script>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'base/css/header.css' %}" />
+
+<header>
+  <!-- Navbar بالا -->
+  <div class="navbar navbar-dark navbar-fancy shadow-sm py-3" id="header">
+    <div class="container d-flex justify-content-between align-items-center position-relative">
+      <!-- دکمه منو سمت راست -->
+      <button class="navbar-toggler border-0 text-white" type="button" id="toggleMenuFancy"><span class="fs-4">&#9776;</span></button>
+
+      <!-- پیام خوش‌آمدگویی وسط navbar -->
+      {% if request.user.is_authenticated %}
+        <div class="navbar-welcome position-absolute top-50 start-50 translate-middle text-white d-flex align-items-center px-3 py-1 rounded">
+          <span class="fw-bold me-3">سلام، {{ request.user.first_name }}!</span>
+          <div id="super-flying-emojis" class="position-relative" style="width: 70px; height: 24px;"></div>
+        </div>
+      {% endif %}
+
+      <!-- ورود / خروج سمت چپ -->
+      {% if request.user.is_authenticated %}
+        <a href="{% url 'accounts:logout_url' %}" class="login-link fs-5 fw-bold">
+          خروج<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="ms-2 login-icon" viewBox="0 0 24 24">
+            <path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"></path>
+            <polyline points="14 7 9 12 14 17"></polyline>
+            <line x1="9" y1="12" x2="21" y2="12"></line>
+          </svg>
+        </a>
+      {% else %}
+        <a href="{% url 'accounts:login_url' %}" class="login-link fs-5 fw-bold">
+          ورود<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="ms-2 login-icon" viewBox="0 0 24 24">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- منوی کشویی فانتزی -->
+  <div id="navbarHeaderFancy" class="text-white p-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7 mb-3 mb-md-0">
+          <h4 class="fw-bold">درباره ما</h4>
+          <p>شما می‌توانید از طریق این پنل‌ها با ما ارتباط بگیرید. ❤️</p>
+        </div>
+        <div class="col-md-5">
+          <h4 class="fw-bold">پنل‌های ارتباطی</h4>
+          <ul class="list-unstyled mt-2">
+            <li class="mb-2">
+              <a href="https://t.me/ali_mohammad_shirdel" class="text-link-fancy d-flex align-items-center text-decoration-none"><i class="bi bi-telegram icon"></i> تلگرام</a>
+            </li>
+            <li class="mb-2">
+              <a href="tel:+989365933042" class="text-link-fancy d-flex align-items-center text-decoration-none"><i class="bi bi-telephone icon"></i> تلفن</a>
+            </li>
+            <li>
+              <a href="mailto:ali.m.shirdel86@gmail.com" class="text-link-fancy d-flex align-items-center text-decoration-none"><i class="bi bi-envelope icon"></i> ایمیل</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script src="{% static 'base/javascript/header.js' %}" defer></script>
