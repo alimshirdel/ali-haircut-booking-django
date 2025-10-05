@@ -35,11 +35,12 @@ def register_view(request):
         if request.POST.get("resend") == "1" and otp_stage:
             phone = request.session.get("user_phone")
             if phone:
-                code = random.randint(1000, 9999)
+
+
+                code = send_sms(phone)
                 request.session["verification_code"] = code
                 request.session["verification_expire"] = time.time() + 300  # ۵ دقیقه
                 request.session.modified = True
-                send_sms(phone, code)
                 messages.success(request, "کد تایید دوباره ارسال شد.")
                 remaining_time = 300  # ریست تایمر
             return render(
@@ -114,12 +115,13 @@ def register_view(request):
                         "last_name": form.cleaned_data["last_name"],
                     }
 
-                    code = random.randint(1000, 9999)
+
+                    code = send_sms(phone)
                     request.session["verification_code"] = code
                     request.session["verification_expire"] = time.time() + 300
                     request.session["user_data"] = data
                     request.session["user_phone"] = phone
-                    send_sms(phone, code)
+
                     messages.info(request, "کد تایید برای شما ارسال شد.")
                     remaining_time = 300
                     otp_stage = True
@@ -133,27 +135,26 @@ def register_view(request):
     )
 
 
-def send_sms(phone, code):
+def send_sms(phone):
     try:
-        worker_url = "https://aged-sun-9fa1.ali-m-shirdel86.workers.dev/"
-        payload = {
-            "to": str(phone),
-            "text": f"سلام 🌹\nکد ورود شما به سایت موکات: {code}",
-        }
+        worker_url = "https://billowing-king-e9af.ali-m-shirdel86.workers.dev/"
+        payload = {"to": str(phone)}
 
         response = requests.post(worker_url, json=payload, timeout=10)
         data = response.json()
 
         if data.get("success"):
-            print("✅ SMS sent successfully:", data.get("result"))
-            return data.get("result")
+            print("✅ OTP sent:", data.get("result"))
+            # می‌توانیم کد واقعی ملی پیامک را برگردانیم
+            result = data.get("result")
+            code = None
+            if isinstance(result, dict):
+                code = result.get("code") or result.get("otp")
+            return code
         else:
-            print("❌ SMS failed:", data.get("error") or data.get("result"))
+            print("❌ OTP failed:", data.get("error"))
             return None
 
-    except requests.Timeout:
-        print("⏳ SMS Error: Request timed out")
-        return None
     except requests.RequestException as e:
         print("⚠️ SMS Error:", e)
         return None
@@ -327,24 +328,27 @@ def send_otp_to_user(identifier, code, username=None):
     else:
 
         try:
-            worker_url = "https://aged-sun-9fa1.ali-m-shirdel86.workers.dev/"  # یا آدرس جدید API ملی‌پیامک
+            worker_url = "https://wispy-tree-43d0.ali-m-shirdel86.workers.dev/"
             payload = {
                 "to": str(identifier),
-                "text": f"کد تایید شما برای بازیابی رمز و نام کاربری سایت موکات❤️  : {code}\nاین کد تا ۵ دقیقه معتبر است❤️.\nنام کاربری شما🌹: {username}",
+                "token": code,
+                "username": username or ""
             }
-            response = requests.post(worker_url, json=payload, timeout=10)
-            data = response.json()
+            headers = {"Content-Type": "application/json"}
 
-            if data.get("success"):
-                print("✅ SMS sent successfully:", data.get("result"))
-                return data.get("result")
+            response = requests.post(worker_url, json=payload, headers=headers, timeout=10)
+            data = response.json() if response.content else {}
+
+            if data.get("success") is True:
+                print("✅ SMS sent:", data.get("result"))
+                return True
             else:
-                print("❌ SMS failed:", data.get("error") or data.get("result"))
-                return None
+                print("❌ SMS error:", data.get("error") or data)
+                return False
 
         except requests.Timeout:
-            print("⏳ SMS Error: Request timed out")
-            return None
+            print("⏳ SMS Error: Timeout")
+            return False
         except requests.RequestException as e:
             print("⚠️ SMS Error:", e)
-            return None
+            return False
