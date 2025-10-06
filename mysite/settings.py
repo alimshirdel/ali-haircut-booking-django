@@ -15,7 +15,7 @@ SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = config("DEBUG", default=True, cast=bool)  # دریافت DEBUG از .env
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["alimohammad86.pythonanywhere.com", "127.0.0.1", "localhost"]
 
