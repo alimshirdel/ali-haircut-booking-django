@@ -1,5 +1,8 @@
+import os
 from pathlib import Path
 from decouple import config
+from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qsl
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,9 +15,9 @@ SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = config("DEBUG", default=True, cast=bool)  # دریافت DEBUG از .env
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [ "alimohammad86.pythonanywhere.com" , "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["alimohammad86.pythonanywhere.com", "127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -64,10 +67,22 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# --- Database Configuration (Neon + Django) ---
+
+
+load_dotenv()  # Load variables from .env
+
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        'NAME': config('DB_NAME', default=BASE_DIR / 'db.sqlite3'),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": tmpPostgres.path.lstrip("/"),  # حذف / اضافی
+        "USER": tmpPostgres.username,
+        "PASSWORD": tmpPostgres.password,
+        "HOST": tmpPostgres.hostname,
+        "PORT": tmpPostgres.port or 5432,
+        "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
     }
 }
 
