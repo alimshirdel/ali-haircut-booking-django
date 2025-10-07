@@ -44,6 +44,7 @@ class Reservation(models.Model):
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     time_slot = models.TimeField()  # زمان دقیق رزرو نیم ساعتی
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.time_slot} - {self.schedule.date}"

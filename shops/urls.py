@@ -8,6 +8,9 @@ from .views import (
     reservation_create_view,
     reservation_list_view,
     reservation_delete,
+    barber_reservations_view,
+    delete_reservation_view,
+    my_reservations_view,
 )
 
 app_name = "shops"
@@ -29,5 +32,12 @@ urlpatterns = [
         "reservation/<int:pk>/delete/",
         reservation_delete,
         name="reservation_delete_url",
+    ),
+    path("my/reservations/", barber_reservations_view, name="barber_reservations_url"),
+    path("my/bookings/", my_reservations_view, name="my_reservations_url"),
+    path(
+        "my/bookings/delete/<int:reservation_id>/",
+        delete_reservation_view,
+        name="delete_reservation_url",
     ),
 ]

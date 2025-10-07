@@ -410,3 +410,30 @@ def reservation_delete(request, pk):
         schedule.delete()
         messages.success(request, "زمان با موفقیت حذف شد ✅")
     return redirect("shops:reservation_list_url", pk)
+
+
+@login_required
+def barber_reservations_view(request):
+    reservations = (
+        Reservation.objects.filter(schedule__shop__barber=request.user)
+        .select_related("user", "schedule", "schedule__shop")
+        .order_by("-time_slot")
+    )
+    return render(
+        request, "shops/barber_reservations.html", {"reservations": reservations}
+    )
+
+
+@login_required
+def my_reservations_view(request):
+    reservations = Reservation.objects.filter(user=request.user).select_related(
+        "schedule", "schedule__shop"
+    )
+    return render(request, "shops/my_reservations.html", {"reservations": reservations})
+
+
+@login_required
+def delete_reservation_view(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+    reservation.delete()
+    return redirect("shops:my_reservations_url")

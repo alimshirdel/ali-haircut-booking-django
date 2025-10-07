@@ -1,0 +1,43 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load jalali_extras %}
+{% load jalali_tags %}
+
+{% block title %}
+  رزروهای من
+{% endblock %}
+{% block links %}
+  <link rel="icon" href="{% static 'shops/icons/reservations.png' %}" type="image/ico/jpg" />
+{% endblock %}
+{% block content %}
+  <div class="container py-5">
+    <h2 class="text-center mb-4">رزروهای انجام‌شده برای آرایشگاه‌های شما 💈</h2>
+
+    {% if reservations %}
+      <table class="table table-striped text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>نام مشتری</th>
+            <th>آرایشگاه</th>
+            <th>تاریخ</th>
+            <th>ساعت</th>
+            <th>ثبت شده در</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in reservations %}
+            <tr>
+              <td>{{ r.user.get_full_name }}</td>
+              <td>{{ r.schedule.shop.name }}</td>
+              <td>{{ r.schedule.date|jalali }}</td>
+              <td>{{ r.time_slot }}</td>
+              <td>{{ r.created_at|to_jalali:'مورخ %Y/%m/%d  در ساعت %H:%M' }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="text-center text-muted mt-5">هیچ رزروی برای آرایشگاه‌های شما ثبت نشده است 🙁</p>
+    {% endif %}
+  </div>
+{% endblock %}

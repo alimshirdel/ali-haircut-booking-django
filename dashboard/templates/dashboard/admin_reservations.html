@@ -1,0 +1,113 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load jalali_extras %}
+{% load jalali_tags %}
+
+{% block title %}
+  مدیریت رزروها
+{% endblock %}
+{% block links %}
+  <link rel="icon" href="{% static 'shops/icons/admin_reservations.png' %}" type="image/ico/jpg" />
+  <link rel="stylesheet" href="{% static 'dashboard/css/admin_reservations.css' %}" />
+{% endblock %}
+{% block content %}
+  <div class="container py-5">
+    <h1 class="mb-4 text-center">📅 مدیریت رزروها</h1>
+
+    <form method="get" class="d-flex justify-content-center mb-4">
+      <input type="text" name="date" class="form-control w-25 text-end" placeholder="جستجو بر اساس تاریخ (مثال: 1404/07/15)" value="{{ request.GET.date }}" />
+      <input type="text" name="q" class="form-control w-50 text-end" placeholder="جستجو بر اساس نام رزرو کننده ، نام کاربری یا مغازه" value="{{ request.GET.q }}" />
+      <button class="btn btn-primary ms-2">جستجو</button>
+    </form>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>نام رزرو کننده</th>
+            <th>نام کاربری</th>
+            <th>آرایشگاه</th>
+            <th>تاریخ</th>
+            <th>ساعت</th>
+            <th>زمان ثبت رزرو</th>
+            <th>عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in reservations %}
+            <tr>
+              <td>{{ r.user.get_full_name }}</td>
+              <td>{{ r.user.username }}</td>
+              <td>{{ r.schedule.shop.name }}</td>
+              <td>{{ r.schedule.date|jalali }}</td>
+              <td>{{ r.time_slot }}</td>
+              <td>{{ r.created_at|to_jalali:'مورخ %Y/%m/%d  در ساعت %H:%M' }}</td>
+              <td>
+                <a href="{% url 'dashboard:delete_reservation_url' r.id %}" class="btn btn-sm btn-danger" onclick="return confirm('آیا از حذف این رزرو مطمئنی؟')">حذف</a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7" class="text-muted">هیچ رزروی یافت نشد 😕</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- Pagination Section -->
+    <div class="d-flex flex-column align-items-center mt-4">
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          {% if reservations.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1&q={{ query }}&date={{ request.GET.date }}">⏭ اول</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ reservations.previous_page_number }}&q={{ query }}&date={{ request.GET.date }}">قبلی</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">⏭ اول</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">قبلی</span>
+            </li>
+          {% endif %}
+
+          <li class="page-item active">
+            <span class="page-link">صفحه {{ reservations.number }} از {{ reservations.paginator.num_pages }}</span>
+          </li>
+
+          {% if reservations.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ reservations.next_page_number }}&q={{ query }}&date={{ request.GET.date }}">بعدی</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ reservations.paginator.num_pages }}&q={{ query }}&date={{ request.GET.date }}">آخر ⏮</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">بعدی</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">آخر ⏮</span>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+
+      <!-- صفحه انتخاب مستقیم -->
+      <form method="get" class="d-flex align-items-center mt-2">
+        <input type="hidden" name="q" value="{{ query }}" />
+        <input type="hidden" name="date" value="{{ request.GET.date }}" />
+        <label for="page" class="me-2">برو به صفحه:</label>
+        <input type="number" name="page" min="1" max="{{ reservations.paginator.num_pages }}" class="form-control form-control-sm text-center me-2" style="width: 80px;" placeholder="شماره" />
+        <button class="btn btn-sm btn-outline-primary" type="submit">برو</button>
+      </form>
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="{% url 'dashboard:admin_dashboard_url' %}" class="btn btn-secondary">بازگشت به پنل مدیریت</a>
+    </div>
+  </div>
+{% endblock %}

@@ -15,7 +15,7 @@ SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = config("DEBUG", default=True, cast=bool)  # دریافت DEBUG از .env
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["alimohammad86.pythonanywhere.com", "127.0.0.1", "localhost"]
 
@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     "accounts",
     "shops",
     "django_jalali",
+    "jalali_date",
+    "dashboard",
 ]
 
 MIDDLEWARE = [
@@ -56,6 +58,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "shops.context_processors.has_shop_context",
             ],
         },
     },
@@ -85,7 +88,12 @@ DATABASES = {
         "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
     }
 }
-
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

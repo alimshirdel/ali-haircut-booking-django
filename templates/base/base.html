@@ -1,12 +1,15 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="auto">
   <title>
     {% block title %}
+
     {% endblock %}
   </title>
   <head>
     {% include 'base/header_ref.html' %}
     {% block links %}
+
     {% endblock %}
   </head> <body>
     {% include 'base/svg.html' %}
@@ -14,7 +17,61 @@
 
     <main>
       {% block content %}
+
       {% endblock %}
+      {% if request.user.is_authenticated %}
+        <button id="sidebarToggle" class="sidebar-toggle-btn">☰ منو</button>
+
+        <!-- نوار کشویی سمت راست -->
+        <aside id="rightSidebar" class="right-sidebar">
+          <button id="closeSidebar" class="close-btn">&times;</button>
+          <h3>منوی سریع</h3>
+          <ul>
+            {% if request.user.is_staff or request.user.is_superuser %}
+              <li>
+                <a href="{% url 'dashboard:admin_dashboard_url' %}">پنل مدیریت</a>
+              </li>
+            {% endif %}
+            <li>
+              <a href="{% url 'shops:shops_url' %}">صفحه اصلی</a>
+            </li>
+            <li>
+              <a href="#">پرداخت و تسویه</a>
+            </li>
+            <li>
+              <a href="{% url 'shops:create_url' %}">ثبت آرایشگاه</a>
+            </li>
+            {% if has_shop %}
+              <li>
+                <a href="{% url 'shops:barber_reservations_url' %}">رزروها</a>
+              </li>
+            {% else %}
+              <li>
+                <a href="{% url 'shops:my_reservations_url' %}">رزروها</a>
+              </li>
+            {% endif %}
+          </ul>
+        </aside>
+      {% else %}
+        <button id="sidebarToggle" class="sidebar-toggle-btn">☰ منو</button>
+
+        <!-- نوار کشویی سمت راست -->
+        <aside id="rightSidebar" class="right-sidebar">
+          <button id="closeSidebar" class="close-btn">&times;</button>
+          <h3>منوی سریع</h3>
+          <ul>
+            <li>
+              <a href="{% url 'shops:shops_url' %}">صفحه اصلی</a>
+            </li>
+            <li>
+              <a href="{% url 'accounts:login_url' %}">ورود</a>
+            </li>
+            <li>
+              <a href="{% url 'accounts:register_url' %}">ثبت نام</a>
+            </li>
+          </ul>
+        </aside>
+      {% endif %}
     </main>
     {% include 'base/footer.html' %}
     {% include 'base/footer_ref.html' %}
@@ -27,6 +84,8 @@
     </style>
 
     {% block scripts %}
+
     {% endblock %}
+    <script src="{% static 'base/javascript/base.js' %}" defer></script>
   </body>
 </html>

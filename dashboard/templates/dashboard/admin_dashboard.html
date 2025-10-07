@@ -1,0 +1,54 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+  پنل مدیریت
+{% endblock %}
+{% block links %}
+  <link rel="icon" href="{% static 'shops/icons/dashboard.png' %}" type="image/ico/jpg" />
+{% endblock %}
+{% block content %}
+<div class="container py-5 text-center">
+  <h1 class="mb-5">🎛 پنل مدیریت سایت</h1>
+
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 p-3">
+        <h4>👤 کاربران</h4>
+        <p class="display-6">{{ total_users }}</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 p-3">
+        <h4>🏪 آرایشگاه‌ها</h4>
+        <p class="display-6">{{ total_shops }}</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 p-3">
+        <h4>📅 رزروها</h4>
+        <p class="display-6">{{ total_reservations }}</p>
+      </div>
+    </div>
+  </div>
+
+  <form method="get" class="mb-3">
+    <label for="days">نمایش رزروهای چند روز اخیر:</label>
+    <select name="days" id="days" class="form-select w-auto d-inline-block">
+      <option value="7" {% if days == 7 %}selected{% endif %}>۷ روز</option>
+      <option value="30" {% if days == 30 %}selected{% endif %}>۳۰ روز</option>
+      <option value="90" {% if days == 90 %}selected{% endif %}>۹۰ روز</option>
+    </select>
+    <button class="btn btn-primary">اعمال</button>
+  </form>
+
+  <div class="card p-3 shadow-sm">
+    <canvas id="reservationsChart" data-labels='{{ labels|safe }}' data-values='{{ values|safe }}'></canvas>
+  </div>
+  <br />
+  <a href="{% url 'dashboard:admin_reservations_url' %}" class="btn btn-primary">مدیریت رزروها</a>
+</div>
+{% endblock %}
+{% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'dashboard/js/admin_dashboard.js' %}"></script>
+{% endblock %}
