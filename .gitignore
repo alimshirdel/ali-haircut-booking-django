@@ -12,3 +12,5 @@ media/
 
 # .env file with sensitive information
 .env
+
+dump.rdb
