@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // هندل کردن فرم انتخاب تاریخ بدون رفرش
+  // هندل انتخاب تاریخ و دریافت زمان‌ها بدون رفرش
   const reservationForm = document.getElementById("reservationForm");
   const timesContainer = document.getElementById("timesContainer");
 
@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             timesContainer.innerHTML = newTimes.innerHTML;
+            disablePastSlots(); // بعد از بارگذاری slotهای جدید
           }
         })
         .catch(err => {
@@ -91,41 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
     allowInput: true,
     jalali: true,
   });
-});
 
-// شروع مطالعه
-
-// وقتی DOM حاضر شد — (اگر قبلاً listener داری، محتوای زیر را اضافه کن)
-document.querySelectorAll('.my-calendar td[data-date]').forEach(td => {
-  td.addEventListener('click', function () {
-    const date = this.dataset.date; // 'YYYY-MM-DD' (میلادی)
-    // مقدار input تاریخ را هم ست کن تا فرم GET قبلی تو کار کنه:
-    const dateInput = document.getElementById("date");
-    if (dateInput) dateInput.value = date;
-
-    // هایلایت سلکت شده:
-    document.querySelectorAll('.my-calendar td.selected').forEach(el => el.classList.remove('selected'));
-    this.classList.add('selected');
-
-    // fetch برای دریافت timesContainer از سرور (قابلیت بدون رفرش)
-    const url = `${window.location.pathname}?date=${date}`;
-    fetch(url)
-      .then(res => res.text())
-      .then(html => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-        const newTimes = doc.querySelector("#timesContainer");
-        if (newTimes) {
-          document.getElementById("timesContainer").innerHTML = newTimes.innerHTML;
-          // بعد از جایگذاری، اگر لازم باشه می‌تونی event handler های دکمه‌ها رو دوباره bind کنی
-        }
-      })
-      .catch(err => {
-        console.error("خطا در دریافت زمان‌ها:", err);
-      });
-  });
-});
-document.addEventListener("DOMContentLoaded", function () {
   // --- هندل کلیک روزها ---
   function bindDayClicks() {
     document.querySelectorAll('.my-calendar td[data-date]').forEach(td => {
@@ -146,6 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const newTimes = doc.querySelector("#timesContainer");
             if (newTimes) {
               document.getElementById("timesContainer").innerHTML = newTimes.innerHTML;
+              disablePastSlots(); // بعد از جایگذاری
             }
           });
       });
@@ -167,17 +135,44 @@ document.addEventListener("DOMContentLoaded", function () {
             const newCalendar = doc.querySelector(".calendar-card");
             if (newCalendar) {
               document.querySelector(".calendar-card").innerHTML = newCalendar.innerHTML;
-              bindDayClicks();   // روزهای جدید
-              bindMonthNav();    // دکمه‌های ماه جدید
+              bindDayClicks();
+              bindMonthNav();
             }
           });
       });
     });
   }
 
-  // اول بارگذاری
+  // اجرای اولیه برای روزها و ماه
   bindDayClicks();
   bindMonthNav();
-});
 
-// پایان مطالعه 
+  // --- تابع غیرفعال کردن slotهای گذشته ---
+  function disablePastSlots() {
+    const now = new Date();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+    document.querySelectorAll(".btn-slot").forEach((btn) => {
+      const slotTimeStr = btn.value; // "HH:MM"
+      const slotDateElement = btn.closest("form").previousElementSibling; // h4
+      const slotDateStr = slotDateElement.dataset.date; // "YYYY-MM-DD"
+
+      if (!slotTimeStr || !slotDateStr) return;
+
+      const [slotHour, slotMinute] = slotTimeStr.split(":").map(Number);
+      const slotMinutes = slotHour * 60 + slotMinute;
+
+      const slotDate = new Date(slotDateStr);
+
+      // اگر slot برای امروز است و زمان گذشته
+      if (slotDate.toDateString() === now.toDateString() && slotMinutes <= nowMinutes) {
+        btn.disabled = true;
+        btn.classList.add("booked");
+      }
+    });
+  }
+
+  // اجرای اولیه و هر 5 دقیقه
+  disablePastSlots();
+  setInterval(disablePastSlots, 5 * 60 * 1000);
+});

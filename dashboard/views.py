@@ -86,24 +86,26 @@ def admin_reservations_view(request):
         # اگر هم متن جستجو و هم تاریخ هست
         reservations = reservations.filter(
             (
-                Q(user__username__icontains=query)
-                | Q(schedule__shop__name__icontains=query)
-                | Q(user__first_name__icontains=query)
-                | Q(user__last_name__icontains=query)
+                Q(username__icontains=query)
+                | Q(shop_name__icontains=query)
+                | Q(first_name__icontains=query)
+                | Q(last_name__icontains=query)
+                | Q(phone_number__icontains=query)
             )
-            & Q(schedule__date=gregorian_date)
+            & Q(date=gregorian_date)
         )
     elif query:
         # فقط جستجوی متن
         reservations = reservations.filter(
-            Q(user__username__icontains=query)
-            | Q(schedule__shop__name__icontains=query)
-            | Q(user__first_name__icontains=query)
-            | Q(user__last_name__icontains=query)
+            Q(username__icontains=query)
+            | Q(shop_name__icontains=query)
+            | Q(first_name__icontains=query)
+            | Q(last_name__icontains=query)
+            | Q(phone_number__icontains=query)
         )
     elif gregorian_date:
         # فقط جستجوی تاریخ
-        reservations = reservations.filter(schedule__date=gregorian_date)
+        reservations = reservations.filter(date=gregorian_date)
 
     # صفحه‌بندی: هر صفحه 20 رزرو
     paginator = Paginator(reservations, 20)

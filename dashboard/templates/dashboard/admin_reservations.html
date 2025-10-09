@@ -16,7 +16,7 @@
 
     <form method="get" class="d-flex justify-content-center mb-4">
       <input type="text" name="date" class="form-control w-25 text-end" placeholder="جستجو بر اساس تاریخ (مثال: 1404/07/15)" value="{{ request.GET.date }}" />
-      <input type="text" name="q" class="form-control w-50 text-end" placeholder="جستجو بر اساس نام رزرو کننده ، نام کاربری یا مغازه" value="{{ request.GET.q }}" />
+      <input type="text" name="q" class="form-control w-50 text-end" placeholder="جستجو بر اساس نام رزرو کننده ، شماره رزرو کننده ، نام کاربری یا نام ارایشگاه" value="{{ request.GET.q }}" />
       <button class="btn btn-primary ms-2">جستجو</button>
     </form>
 
@@ -25,6 +25,7 @@
         <thead class="table-dark">
           <tr>
             <th>نام رزرو کننده</th>
+            <th>شماره رزرو کننده</th>
             <th>نام کاربری</th>
             <th>آرایشگاه</th>
             <th>تاریخ</th>
@@ -36,10 +37,11 @@
         <tbody>
           {% for r in reservations %}
             <tr>
-              <td>{{ r.user.get_full_name }}</td>
-              <td>{{ r.user.username }}</td>
-              <td>{{ r.schedule.shop.name }}</td>
-              <td>{{ r.schedule.date|jalali }}</td>
+              <td>{{ r.full_name }}</td>
+              <td>{{ r.phone_number }}</td>
+              <td>{{ r.username }}</td>
+              <td>{{ r.shop_name }}</td>
+              <td>{{ r.date|jalali }}</td>
               <td>{{ r.time_slot }}</td>
               <td>{{ r.created_at|to_jalali:'مورخ %Y/%m/%d  در ساعت %H:%M' }}</td>
               <td>
@@ -48,7 +50,7 @@
             </tr>
           {% empty %}
             <tr>
-              <td colspan="7" class="text-muted">هیچ رزروی یافت نشد 😕</td>
+              <td colspan="8" class="text-muted">هیچ رزروی یافت نشد 😕</td>
             </tr>
           {% endfor %}
         </tbody>

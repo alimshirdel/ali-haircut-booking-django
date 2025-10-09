@@ -1,4 +1,4 @@
-import requests, jdatetime
+import requests, jdatetime 
 from persiantools import digits
 from django.conf import settings
 from django.contrib import messages
@@ -198,6 +198,15 @@ def detail_view(request, pk):
                 message = f"مشتری به نام {request.user.get_full_name()} ساعت {slot_time.strftime('%H:%M')} را تا ساعت {end_slot_time.strftime('%H:%M')} برای تاریخ {jalali_str} رزرو کرد."
                 send_sms(shop_owner_phone, message)
         return redirect("shops:detail_url", pk)
+    # در view
+    selected_date = request.GET.get("date")
+    selected_slots = []
+    for s in schedule_slots:
+        if not selected_date or s["date_str"] == selected_date:
+            # بررسی اینکه حداقل یک slot آزاد دارد
+            free_slots = [slot for slot in s["slots"] if not slot["booked"]]
+            if free_slots:
+                selected_slots.append(s)
 
     context = {
         "shop": shop,
@@ -210,6 +219,7 @@ def detail_view(request, pk):
         "prev_jm": prev_jm,
         "next_jy": next_jy,
         "next_jm": next_jm,
+        "selected_slots": selected_slots,
     }
 
     return render(request, "shops/detail.html", context)
@@ -217,7 +227,7 @@ def detail_view(request, pk):
 
 def send_sms(shop_owner_phone, message):
     try:
-        worker_url = "https://aged-sun-9fa1.ali-m-shirdel86.workers.dev/"
+        worker_url = "https://dry-block-1394.ali-m-shirdel86.workers.dev/"
         payload = {
             "to": str(shop_owner_phone),
             "text": f"سلام ❤️ \n {message}",
@@ -404,7 +414,7 @@ def reservation_list_view(request, pk):
 
 @login_required
 def reservation_delete(request, pk):
-    schedule = get_object_or_404(Schedule, pk=pk, barber=request.user)
+    schedule = get_object_or_404(Schedule, pk=pk, shop__barber=request.user)
     pk = schedule.shop.pk
     if request.method == "POST":
         schedule.delete()

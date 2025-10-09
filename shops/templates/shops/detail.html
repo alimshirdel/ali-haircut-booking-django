@@ -91,32 +91,28 @@
       </form>
       <!-- این div جدید -->
       <div id="timesContainer">
-        {% with slots_exist=False %}
-          {% for sched in schedule_slots %}
-            {% if not request.GET.date or sched.date_str == request.GET.date %}
-              {% with slots_exist=True %}
-                <h4 data-date="{{ sched.date_str }}">{{ sched.date|jalali }}</h4>
-                <form method="post">
-                  {% csrf_token %}
-                  <input type="hidden" name="schedule_id" value="{{ sched.schedule.id }}" />
-                  <div class="d-flex gap-2 flex-wrap">
-                    {% for slot in sched.slots %}
-                      {% if not slot.booked %}
-                        <button type="submit" name="slot_time" value="{{ slot.time }}" class="btn-slot">{{ slot.time|time:'H:i' }}</button>
-                      {% else %}
-                        <button class="btn-slot booked" disabled>{{ slot.time|time:'H:i' }}</button>
-                      {% endif %}
-                    {% endfor %}
-                  </div>
-                </form>
-              {% endwith %}
-            {% endif %}
+        {% if selected_slots %}
+          {% for sched in selected_slots %}
+            <h4 data-date="{{ sched.date_str }}">{{ sched.date|jalali }}</h4>
+            <form method="post">
+              {% csrf_token %}
+              <input type="hidden" name="schedule_id" value="{{ sched.schedule.id }}" />
+              <div class="d-flex gap-2 flex-wrap">
+                {% for slot in sched.slots %}
+                  {% if not slot.booked %}
+                    <button type="submit" name="slot_time" value="{{ slot.time }}" class="btn-slot">{{ slot.time|time:"H:i" }}</button>
+                  {% else %}
+                    <button class="btn-slot booked" disabled>{{ slot.time|time:"H:i" }}</button>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </form>
           {% endfor %}
-          {% if not slots_exist %}
-            <p>زمان‌بندی‌ای برای این روز موجود نیست.</p>
-          {% endif %}
-        {% endwith %}
+        {% else %}
+          <p>زمان‌بندی‌ای برای این روز موجود نیست.</p>
+        {% endif %}
       </div>
+
     </div>
     <!-- آدرس و نقشه -->
     <div class="shop-location mt-4">
