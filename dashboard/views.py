@@ -3,13 +3,13 @@ from datetime import timedelta
 from django.utils import timezone
 from django.contrib import messages
 from django.db.models import Count, Q
-from shops.models import Shop, Reservation
 from django.core.paginator import Paginator
 from django.utils.safestring import mark_safe
 from django.contrib.auth import get_user_model
+from django.db.models.functions import TruncDate
+from shops.models import Shop, Reservation, ShopComment
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models.functions import TruncDate
 
 
 User = get_user_model()
@@ -128,3 +128,61 @@ def delete_reservation_view(request, pk):
     reservation.delete()
     messages.success(request, "رزرو با موفقیت حذف شد ✅")
     return redirect("dashboard:admin_reservations_url")
+
+
+@user_passes_test(lambda u: u.is_staff or u.is_superuser)
+def admin_comments_view(request):
+    query = request.GET.get("q", "")
+    query_date = request.GET.get("date", "")  # ورودی شمسی: 1404/07/15
+    comments = ShopComment.objects.select_related("user", "shop").order_by("-created_at")
+
+    try:
+        gregorian_date = None
+        if query_date:
+            jd = jdatetime.datetime.strptime(query_date, "%Y/%m/%d")
+            gregorian_date = jd.togregorian().date()
+    except ValueError:
+        gregorian_date = None  # اگر تاریخ درست نبود، نادیده گرفته می‌شود
+    # جستجو بر اساس کاربر، آرایشگاه یا متن دیدگاه
+
+    if query and gregorian_date:
+        comments = comments.filter(
+            (
+                Q(user__username__icontains=query)
+                | Q(user__phone_number__icontains=query)
+                | Q(user__first_name__icontains=query)
+                | Q(user__last_name__icontains=query)
+                | Q(shop__name__icontains=query)
+            )
+            & Q(created_at__date=gregorian_date)
+        )
+    elif query:
+        comments = comments.filter(
+            Q(user__username__icontains=query)
+            | Q(user__phone_number__icontains=query)
+            | Q(user__first_name__icontains=query)
+            | Q(user__last_name__icontains=query)
+            | Q(shop__name__icontains=query)
+        )
+    elif gregorian_date:
+        # فقط جستجوی تاریخ
+        comments = comments.filter(created_at__date=gregorian_date)
+
+    # صفحه‌بندی (هر صفحه 15 دیدگاه)
+    paginator = Paginator(comments, 15)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "comments": page_obj,
+        "query": query,
+    }
+    return render(request, "dashboard/admin_comments.html", context)
+
+
+@user_passes_test(lambda u: u.is_staff or u.is_superuser)
+def delete_comment_view(request, pk):
+    comment = get_object_or_404(ShopComment, pk=pk)
+    comment.delete()
+    messages.success(request, "دیدگاه با موفقیت حذف شد.")
+    return redirect("dashboard:admin_comments_url")

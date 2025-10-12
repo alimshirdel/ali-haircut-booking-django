@@ -1,5 +1,5 @@
 from django import forms
-from .models import Schedule
+from .models import Schedule, ShopComment, ShopRating
 
 
 class CreateForm(forms.Form):
@@ -68,3 +68,20 @@ class ScheduleForm(forms.ModelForm):
                 }
             ),
         }
+
+
+class ShopCommentForm(forms.ModelForm):
+    class Meta:
+        model = ShopComment
+        fields = ["content"]
+        widgets = {
+            "content": forms.Textarea(
+                attrs={"rows": 3, "placeholder": "دیدگاه خود را بنویسید..."}
+            )
+        }
+
+
+class ShopRatingForm(forms.ModelForm):
+    class Meta:
+        model = ShopRating
+        fields = ["value"]

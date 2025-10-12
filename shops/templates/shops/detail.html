@@ -112,8 +112,8 @@
           <p>زمان‌بندی‌ای برای این روز موجود نیست.</p>
         {% endif %}
       </div>
-
     </div>
+
     <!-- آدرس و نقشه -->
     <div class="shop-location mt-4">
       <h3>آدرس:</h3>
@@ -131,9 +131,77 @@
         <a href="https://www.waze.com/ul?ll={{ shop.latitude }},{{ shop.longitude }}&navigate=yes" target="_blank" class="btn-route"><i class="fa fa-car"></i> Waze</a>
       </div>
     </div>
+
+    <hr class="my-5">
+
+     <!-- ⭐ امتیاز -->
+    <div class="rating-stars">
+      {% for i in full_stars %}
+        <i class="fa-solid fa-star text-warning fs-4"></i>
+      {% endfor %}
+      {% if half_star %}
+        <i class="fa-solid fa-star-half-stroke text-warning fs-4"></i>
+      {% endif %}
+      {% for i in empty_stars %}
+        <i class="fa-regular fa-star text-warning fs-4"></i>
+      {% endfor %}
+      <span class="ms-2 text-muted small">({{ average_rating }} از 5)</span>
+    </div>
+
+    <p class="text-muted mb-4">میانگین: {{ average_rating|floatformat:1 }} از 5</p>
+
+    <div class="border rounded p-4 shadow-sm bg-light d-inline-block">
+      <h5 class="mb-3">ثبت امتیاز شما</h5>
+      <form method="post">
+        {% csrf_token %}
+        {{ rating_form.as_p }}
+        <button type="submit" name="rating_submit" class="btn btn-warning mt-2">⭐ ثبت امتیاز</button>
+      </form>
+    </div>
+
+    <div class="comments-section">
+      <h3 class="fw-bold mb-4 text-center">💬 دیدگاه‌ها</h3>
+    
+      {% if comments %}
+        <div class="list-group mb-4" id="comments-container">
+          {% for comment in comments %}
+            <div class="list-group-item border rounded-3 shadow-sm mb-3 comment-item {% if forloop.counter > 3 %}d-none{% endif %}">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="text-primary">{{ comment.user.username }}</strong>
+                <small class="text-muted">{{ comment.created_at|date:"Y/m/d - H:i" }}</small>
+              </div>
+              <p class="mb-1 text-secondary" style="white-space: pre-wrap;">{{ comment.content }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      
+        {% if comments|length > 3 %}
+          <div class="text-center">
+            <button id="toggle-comments-btn" class="btn btn-outline-primary">نمایش بیشتر 💬</button>
+          </div>
+        {% endif %}
+      {% else %}
+        <p class="text-center text-muted mb-5">هنوز دیدگاهی ثبت نشده است 😔</p>
+      {% endif %}
+    </div>
+
+      <!-- ✏️ فرم افزودن دیدگاه -->
+      <div class="comment-form bg-light p-4 rounded shadow-sm mt-4">
+        <h4 class="mb-3">✏️ افزودن دیدگاه جدید</h4>
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            {{ comment_form.content.label_tag }}
+            {{ comment_form.content }}
+          </div>
+          <button type="submit" name="comment_submit" class="btn btn-success px-4">
+            ارسال دیدگاه 💬
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
@@ -141,5 +209,6 @@
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="{% static 'shops/javascript/detail.js' %}?v=312"></script>
+  <script src="{% static 'shops/javascript/detail.js' %}?v=392"></script>
+  <script src="{% static 'shops/javascript/toggle.js' %}?v=392"></script>
 {% endblock %}

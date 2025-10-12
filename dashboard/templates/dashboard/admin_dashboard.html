@@ -4,7 +4,7 @@
   پنل مدیریت
 {% endblock %}
 {% block links %}
-  <link rel="icon" href="{% static 'shops/icons/dashboard.png' %}" type="image/ico/jpg" />
+  <link rel="icon" href="{% static 'dashboard/icons/dashboard.png' %}" type="image/ico/jpg" />
 {% endblock %}
 {% block content %}
 <div class="container py-5 text-center">
@@ -46,6 +46,7 @@
   </div>
   <br />
   <a href="{% url 'dashboard:admin_reservations_url' %}" class="btn btn-primary">مدیریت رزروها</a>
+  <a href="{% url 'dashboard:admin_comments_url' %}" class="btn btn-primary">مدیریت دیدگاه‌ها</a>
 </div>
 {% endblock %}
 {% block scripts %}

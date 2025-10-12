@@ -1,12 +1,12 @@
-import requests, jdatetime 
+import requests, jdatetime
 from persiantools import digits
 from django.conf import settings
 from django.contrib import messages
 from persiantools.jdatetime import JalaliDate
 from django.contrib.auth import get_user_model
-from .models import Shop, Schedule, Reservation
+from .models import Shop, Schedule, Reservation, ShopComment, ShopRating
 from datetime import timedelta, datetime, date
-from .forms import CreateForm, EditForm, ScheduleForm
+from .forms import CreateForm, EditForm, ScheduleForm, ShopCommentForm, ShopRatingForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -165,39 +165,75 @@ def detail_view(request, pk):
                 "schedule": schedule,
             }
         )
+    # ======== بخش دیدگاه و امتیاز ========
+    comments = shop.comments.all()
+    comment_form = ShopCommentForm()
+    rating_form = ShopRatingForm()
+    avg = shop.average_rating()
+    full_stars = int(avg)
+    half_star = 1 if avg - full_stars >= 0.5 else 0
+    empty_stars = 5 - full_stars - half_star
+
 
     if request.method == "POST":
-        if not request.user.is_authenticated:
-            messages.error(request, "برای رزرو باید وارد سایت شوید.")
-            return redirect("shops:detail_url", pk)
+        # ثبت دیدگاه
+        if "comment_submit" in request.POST:
+            if not request.user.is_authenticated:
+                messages.error(request, "برای ارسال دیدگاه باید وارد شوید.")
+                return redirect("shops:detail_url", pk)
+            comment_form = ShopCommentForm(request.POST)
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
+                comment.user = request.user
+                comment.shop = shop
+                comment.save()
+                messages.success(request, "دیدگاه شما ثبت شد.")
+                return redirect("shops:detail_url", pk)
 
-        slot_time_str = request.POST.get("slot_time")
-        schedule_id = request.POST.get("schedule_id")
-        schedule = Schedule.objects.get(id=schedule_id)
-        slot_time = datetime.strptime(slot_time_str, "%H:%M").time()
-
-        if schedule.reservations.filter(time_slot=slot_time).exists():
-            messages.error(request, "این بازه زمانی قبلاً رزرو شده است.")
-        else:
-            Reservation.objects.create(
-                schedule=schedule, user=request.user, time_slot=slot_time
-            )
-            messages.success(request, "رزرو با موفقیت انجام شد.")
-
-            end_slot_time = (
-                datetime.combine(schedule.date, slot_time) + timedelta(minutes=30)
-            ).time()
-            # ارسال پیامک به صاحب مغازه
-            shop_owner_phone = schedule.shop.barber.phone_number
-            if shop_owner_phone:
-                gregorian_date = schedule.date
-                jalali_date = jdatetime.date.fromgregorian(date=gregorian_date)
-                jalali_str = (
-                    f"{jalali_date.year}/{jalali_date.month:02}/{jalali_date.day:02}"
+        # ثبت امتیاز
+        elif "rating_submit" in request.POST:
+            if not request.user.is_authenticated:
+                messages.error(request, "برای ثبت امتیاز باید وارد شوید.")
+                return redirect("shops:detail_url", pk)
+            rating_form = ShopRatingForm(request.POST)
+            if rating_form.is_valid():
+                ShopRating.objects.update_or_create(
+                    user=request.user,
+                    shop=shop,
+                    defaults={"value": rating_form.cleaned_data["value"]},
                 )
-                message = f"مشتری به نام {request.user.get_full_name()} ساعت {slot_time.strftime('%H:%M')} را تا ساعت {end_slot_time.strftime('%H:%M')} برای تاریخ {jalali_str} رزرو کرد."
-                send_sms(shop_owner_phone, message)
-        return redirect("shops:detail_url", pk)
+                messages.success(request, "امتیاز شما ثبت شد.")
+                return redirect("shops:detail_url", pk)
+        elif "slot_time" in request.POST:
+            if not request.user.is_authenticated:
+                messages.error(request, "برای رزرو باید وارد سایت شوید.")
+                return redirect("shops:detail_url", pk)
+            else:
+                slot_time_str = request.POST.get("slot_time")
+                schedule_id = request.POST.get("schedule_id")
+                schedule = Schedule.objects.get(id=schedule_id)
+                slot_time = datetime.strptime(slot_time_str, "%H:%M").time()
+
+            if schedule.reservations.filter(time_slot=slot_time).exists():
+                messages.error(request, "این بازه زمانی قبلاً رزرو شده است.")
+            else:
+                Reservation.objects.create(
+                    schedule=schedule, user=request.user, time_slot=slot_time
+                )
+                messages.success(request, "رزرو با موفقیت انجام شد.")
+
+                end_slot_time = (
+                    datetime.combine(schedule.date, slot_time) + timedelta(minutes=30)
+                ).time()
+                # ارسال پیامک به صاحب مغازه
+                shop_owner_phone = schedule.shop.barber.phone_number
+                if shop_owner_phone:
+                    gregorian_date = schedule.date
+                    jalali_date = jdatetime.date.fromgregorian(date=gregorian_date)
+                    jalali_str = f"{jalali_date.year}/{jalali_date.month:02}/{jalali_date.day:02}"
+                    message = f"مشتری به نام {request.user.get_full_name()} ساعت {slot_time.strftime('%H:%M')} را تا ساعت {end_slot_time.strftime('%H:%M')} برای تاریخ {jalali_str} رزرو کرد."
+                    send_sms(shop_owner_phone, message)
+            return redirect("shops:detail_url", pk)
     # در view
     selected_date = request.GET.get("date")
     selected_slots = []
@@ -220,6 +256,14 @@ def detail_view(request, pk):
         "next_jy": next_jy,
         "next_jm": next_jm,
         "selected_slots": selected_slots,
+        # بخش دیدگاه و امتیاز:
+        "comments": comments,
+        "comment_form": comment_form,
+        "rating_form": rating_form,
+        "average_rating": avg,
+        "full_stars": range(full_stars),
+        "half_star": half_star,
+        "empty_stars": range(empty_stars),
     }
 
     return render(request, "shops/detail.html", context)

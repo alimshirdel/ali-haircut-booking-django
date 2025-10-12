@@ -16,6 +16,12 @@ class Shop(models.Model):
     barber = models.ForeignKey(User, on_delete=models.CASCADE)
     update_date = models.DateTimeField(auto_now=True)
 
+    def average_rating(self):
+        ratings = self.ratings.all()
+        if ratings.exists():
+            return round(sum(r.value for r in ratings) / ratings.count(), 1)
+        return 0
+
     def __str__(self):
         return self.name
 
@@ -46,10 +52,9 @@ class Reservation(models.Model):
         null=True,
         blank=True,
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     time_slot = models.TimeField()  # زمان دقیق رزرو نیم ساعتی
     created_at = models.DateTimeField(auto_now_add=True)
-    shop = models.ForeignKey(Shop, on_delete=models.SET_NULL, null=True, blank=True)
     shop_name = models.CharField(max_length=255, blank=True)
     date = models.DateField(null=True, blank=True)
 
@@ -61,7 +66,6 @@ class Reservation(models.Model):
     def save(self, *args, **kwargs):
         # اگر رزرو به Schedule متصل است و shop هنوز تنظیم نشده
         if self.schedule:
-            self.shop = self.schedule.shop
             self.shop_name = self.schedule.shop.name
             self.date = self.schedule.date
 
@@ -85,3 +89,34 @@ class Reservation(models.Model):
     class Meta:
         verbose_name = "رزرو"
         verbose_name_plural = "رزرو ها"
+
+
+class ShopComment(models.Model):
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(verbose_name="متن دیدگاه")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "دیدگاه"
+        verbose_name_plural = "دیدگاه‌ها"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.shop.name}"
+
+
+class ShopRating(models.Model):
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name="ratings")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    value = models.IntegerField(
+        choices=[(i, i) for i in range(1, 6)], verbose_name="امتیاز"
+    )  # از ۱ تا ۵
+
+    class Meta:
+        unique_together = ("shop", "user")  # هر کاربر فقط یک بار می‌تونه امتیاز بده
+        verbose_name = "امتیاز"
+        verbose_name_plural = "امتیازها"
+
+    def __str__(self):
+        return f"{self.shop.name} - {self.value}⭐"
