@@ -84,17 +84,28 @@ load_dotenv()  # Load variables from .env
 
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": tmpPostgres.path.lstrip("/"),  # حذف / اضافی
-        "USER": tmpPostgres.username,
-        "PASSWORD": tmpPostgres.password,
-        "HOST": tmpPostgres.hostname,
-        "PORT": tmpPostgres.port or 5432,
-        "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'my_local_db',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": tmpPostgres.path.lstrip("/"),  # حذف / اضافی
+#         "USER": tmpPostgres.username,
+#         "PASSWORD": tmpPostgres.password,
+#         "HOST": tmpPostgres.hostname,
+#         "PORT": tmpPostgres.port or 5432,
+#         "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
+#     }
+# }
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.sqlite3",

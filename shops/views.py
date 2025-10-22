@@ -1,6 +1,9 @@
 import requests, jdatetime
 from persiantools import digits
 from django.conf import settings
+from django.db.models import Count
+from django.db.models import FloatField , F
+from django.db.models.functions import Sqrt, Power
 from django.contrib import messages
 from persiantools.jdatetime import JalaliDate
 from django.contrib.auth import get_user_model
@@ -9,6 +12,7 @@ from datetime import timedelta, datetime, date
 from .forms import CreateForm, EditForm, ScheduleForm, ShopCommentForm, ShopRatingForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator
 
 user = get_user_model()
 
@@ -45,12 +49,50 @@ def create_view(request):
 
 
 def shops_view(request):
+    user_lat = request.GET.get("lat")
+    user_lng = request.GET.get("lng")
     keyboard_search = request.GET.get("search")
+    order = request.GET.get("order")
+    shops = Shop.objects.filter(is_show=True)
+
     if keyboard_search:
-        shop = Shop.objects.filter(is_show=True, name__icontains=keyboard_search)
-    else:
-        shop = Shop.objects.filter(is_show=True)
-    context = {"shops": shop}
+        shops = shops.filter(name__icontains=keyboard_search)
+
+    # مرتب‌سازی
+    if order == "rating":
+        # مرتب‌سازی بر اساس میانگین امتیاز (چون avg در مدل محاسبه میشه)
+        shops = sorted(shops, key=lambda s: s.average_rating(), reverse=True)
+
+    elif order == "price":
+        # فرض کن مدل Shop فیلد price داره
+        # shops = shops.order_by("price")
+        pass
+
+    elif order == "distance":
+      # اگر مختصات کاربر موجود بود، فاصله رو حساب کن
+      if user_lat and user_lng:
+        user_lat = float(user_lat)
+        user_lng = float(user_lng)
+
+        shops = shops.annotate(
+            distance=Sqrt(
+                Power(F("latitude") - user_lat, 2) +
+                Power(F("longitude") - user_lng, 2)
+            )
+        ).order_by("distance")
+
+    elif order == "featured":
+        # اگر مغازه‌های ویژه داری
+        shops = shops.annotate(reservation_count=Count("schedules__reservations", distinct=True)).order_by("-reservation_count")
+
+    paginator = Paginator(shops , 12)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    context = {
+        "shops": page_obj,
+        "search": keyboard_search,
+        "order": order,
+        }
     return render(request, "shops/shops.html", context)
 
 

@@ -64,3 +64,57 @@ window.addEventListener('load', () => {
     wave.style.background = 'linear-gradient(90deg, #ff6b81, #ff4757, #ff6b81)';
   });
 });
+document.addEventListener("DOMContentLoaded", function () {
+  const orderSelect = document.getElementById("order-select");
+  if (!orderSelect) return; // stop if not found
+
+  const form = orderSelect.closest("form");
+  if (!form) return; // stop if no form found
+
+  orderSelect.addEventListener("change", function () {
+    const value = orderSelect.value;
+
+    if (value === "distance") {
+      if (navigator.geolocation) {
+        orderSelect.disabled = true;
+        orderSelect.options[orderSelect.selectedIndex].text = "در حال دریافت موقعیت...";
+
+        navigator.geolocation.getCurrentPosition(
+          function (pos) {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            let latInput = form.querySelector('input[name="lat"]');
+            let lngInput = form.querySelector('input[name="lng"]');
+            if (!latInput) {
+              latInput = document.createElement("input");
+              latInput.type = "hidden";
+              latInput.name = "lat";
+              form.appendChild(latInput);
+            }
+            if (!lngInput) {
+              lngInput = document.createElement("input");
+              lngInput.type = "hidden";
+              lngInput.name = "lng";
+              form.appendChild(lngInput);
+            }
+
+            latInput.value = lat;
+            lngInput.value = lng;
+
+            form.submit();
+          },
+          function () {
+            alert("امکان دسترسی به موقعیت وجود ندارد ❌");
+            orderSelect.disabled = false;
+            orderSelect.options[orderSelect.selectedIndex].text = "نزدیکی 📍";
+          }
+        );
+      } else {
+        alert("مرورگر شما از موقعیت مکانی پشتیبانی نمی‌کند.");
+      }
+    } else {
+      form.submit();
+    }
+  });
+});
