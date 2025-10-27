@@ -7,7 +7,7 @@ SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["alimohammad86.pythonanywhere.com", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["mo-inoo.ir", "www.mo-inoo.ir", "37.32.9.102", "127.0.0.1", "localhost"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
