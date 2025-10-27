@@ -1,9 +1,3 @@
-import os
-import django
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
-django.setup()
-
 from dramatiq import actor
 from django.utils import timezone
 from jalali_date import datetime2jalali
