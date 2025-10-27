@@ -313,19 +313,28 @@ def detail_view(request, pk):
 
 def send_sms(shop_owner_phone, message):
     try:
-        worker_url = "https://dry-block-1394.ali-m-shirdel86.workers.dev/"
+        url = settings.MELIPAYAMAK_URL  # در settings از .env خونده میشه
         payload = {
             "to": str(shop_owner_phone),
-            "text": f"سلام ❤️ \n {message}",
+            "text": f"سلام ❤️\n{message}"
         }
-        response = requests.post(worker_url, json=payload, timeout=10)
-        data = response.json()
+        headers = {"Content-Type": "application/json"}
 
-        if data.get("success"):
-            print("✅ SMS sent successfully:", data.get("result"))
-            return data.get("result")
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response.raise_for_status()
+
+        # سعی کن JSON بخونی، اگر JSON نبود raw text برگردون
+        try:
+            data = response.json()
+        except ValueError:
+            data = {"raw": response.text}
+
+        # بررسی موفقیت
+        if response.ok:
+            print("✅ SMS sent successfully:", data)
+            return data
         else:
-            print("❌ SMS failed:", data.get("error") or data.get("result"))
+            print("❌ SMS failed:", data)
             return None
 
     except requests.Timeout:

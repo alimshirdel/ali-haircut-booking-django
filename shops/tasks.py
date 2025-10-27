@@ -4,6 +4,7 @@ from jalali_date import datetime2jalali
 from datetime import datetime, timedelta
 from .models import Schedule, Reservation
 import requests, time, dramatiq, random
+from django.conf import settings
 
 
 @dramatiq.actor
@@ -15,18 +16,23 @@ def send_sms_reminder(phone_number, message, instance_id):
         return
     time.sleep(random.randint(3, 5))
     try:
-        worker_url = "https://cool-dust-4537.ali-m-shirdel86.workers.dev/"
+        url = settings.MELIPAYAMAK_URL
         payload = {"to": str(phone_number), "text": message}
-        response = requests.post(worker_url, json=payload, timeout=10)
-        data = response.json()
+        response = requests.post(url, json=payload, timeout=10)
+        data = response.json() if response.content else {}
 
-        if data.get("success"):
-            print(f"✅ پیامک به {phone_number} ارسال شد.")
+        if response.ok:
+            print(f"✅ پیامک با موفقیت برای {phone_number} ارسال شد.")
+            print("📨 پاسخ ملی پیامک:", data)
         else:
-            print(f"❌ خطا در ارسال پیامک به {phone_number}:", data)
+            print(f"❌ خطا در ارسال پیامک به {phone_number}:")
+            print("🔹 وضعیت:", response.status_code)
+            print("🔹 پاسخ:", data)
 
+    except requests.Timeout:
+        print(f"⏳ خطای Timeout در ارسال پیامک به {phone_number}")
     except Exception as e:
-        print(f"⚠️ خطا در ارسال پیامک به {phone_number}:", e)
+        print(f"⚠️ خطای کلی در ارسال پیامک به {phone_number}: {e}")
 
 
 @dramatiq.actor

@@ -135,29 +135,36 @@ def register_view(request):
     )
 
 
+
 def send_sms(phone):
     try:
-        worker_url = "https://billowing-king-e9af.ali-m-shirdel86.workers.dev/"
+        url = settings.MELIPAYAMAK_URL
         payload = {"to": str(phone)}
+        headers = {"Content-Type": "application/json"}
 
-        response = requests.post(worker_url, json=payload, timeout=10)
-        data = response.json()
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response.raise_for_status()  # اگر خطای HTTP وجود داشته باشد، Exception می‌اندازد
 
-        if data.get("success"):
-            print("✅ OTP sent:", data.get("result"))
-            # می‌توانیم کد واقعی ملی پیامک را برگردانیم
-            result = data.get("result")
-            code = None
-            if isinstance(result, dict):
-                code = result.get("code") or result.get("otp")
-            return code
+        data = response.json()  # پاسخ JSON از ملی پیامک
+        print("📨 Response from MeliPayamak:", data)
+
+        # اگر پاسخ شامل کد OTP است، آن را استخراج کن
+        result = data.get("result") or data
+        code = None
+        if isinstance(result, dict):
+            code = result.get("code") or result.get("otp")
+
+        if code:
+            print("✅ OTP sent successfully:", code)
         else:
-            print("❌ OTP failed:", data.get("error"))
-            return None
+            print("⚠️ OTP sent but no code returned")
+
+        return code
 
     except requests.RequestException as e:
-        print("⚠️ SMS Error:", e)
+        print("❌ SMS sending failed:", e)
         return None
+
 
 
 def login_view(request):
@@ -328,22 +335,23 @@ def send_otp_to_user(identifier, code, username=None):
     else:
 
         try:
-            worker_url = "https://wispy-tree-43d0.ali-m-shirdel86.workers.dev/"
+            url = settings.MELIPAYAMAK_URL  # از settings یا env می‌گیری
             payload = {
+                "bodyId": 376148,  # همون قالبی که در ملی‌پیامک ساختی
                 "to": str(identifier),
-                "token": code,
-                "username": username or ""
+                "args": [str(code), username or ""],
             }
             headers = {"Content-Type": "application/json"}
 
-            response = requests.post(worker_url, json=payload, headers=headers, timeout=10)
+            response = requests.post(url, json=payload, headers=headers, timeout=10)
             data = response.json() if response.content else {}
 
-            if data.get("success") is True:
-                print("✅ SMS sent:", data.get("result"))
+            # بررسی موفقیت پاسخ
+            if response.ok and data.get("status") != "error":
+                print("✅ SMS sent:", data)
                 return True
             else:
-                print("❌ SMS error:", data.get("error") or data)
+                print("❌ SMS error:", data)
                 return False
 
         except requests.Timeout:

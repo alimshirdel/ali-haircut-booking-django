@@ -5,6 +5,8 @@ venv/
 
 media/
 
+/staticfiles/
+
 .env
 
 dump.rdb
