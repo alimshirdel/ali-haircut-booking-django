@@ -138,7 +138,7 @@ def register_view(request):
 
 def send_sms(phone):
     try:
-        url = settings.MELIPAYAMAK_URL
+        url = settings.MELIPAYAMAK_URL_OTP
         payload = {"to": str(phone)}
         headers = {"Content-Type": "application/json"}
 
@@ -335,7 +335,7 @@ def send_otp_to_user(identifier, code, username=None):
     else:
 
         try:
-            url = settings.MELIPAYAMAK_URL  # از settings یا env می‌گیری
+            url = settings.MELIPAYAMAK_URL_SHARED  # از settings یا env می‌گیری
             payload = {
                 "bodyId": 376148,  # همون قالبی که در ملی‌پیامک ساختی
                 "to": str(identifier),

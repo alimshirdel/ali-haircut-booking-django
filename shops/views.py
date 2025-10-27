@@ -313,7 +313,7 @@ def detail_view(request, pk):
 
 def send_sms(shop_owner_phone, message):
     try:
-        url = settings.MELIPAYAMAK_URL  # در settings از .env خونده میشه
+        url = settings.MELIPAYAMAK_URL_SIMPLE  # در settings از .env خونده میشه
         payload = {
             "to": str(shop_owner_phone),
             "text": f"سلام ❤️\n{message}"

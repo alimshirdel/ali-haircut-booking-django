@@ -1,3 +1,9 @@
+import os
+import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+django.setup()
+
 from dramatiq import actor
 from django.utils import timezone
 from jalali_date import datetime2jalali
@@ -11,12 +17,12 @@ from django.conf import settings
 def send_sms_reminder(phone_number, message, instance_id):
     try:
         reservation = Reservation.objects.get(id=instance_id)
-    except Reservation.DoesNotExist:
+    except reservation.DoesNotExist:
         print(f"⚠️ رزرو {instance_id} پیدا نشد، پیامک ارسال نشد.")
         return
     time.sleep(random.randint(3, 5))
     try:
-        url = settings.MELIPAYAMAK_URL
+        url = settings.MELIPAYAMAK_URL_SIMPLE
         payload = {"to": str(phone_number), "text": message}
         response = requests.post(url, json=payload, timeout=10)
         data = response.json() if response.content else {}
