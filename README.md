@@ -40,7 +40,7 @@
 
 ## 🌐 دموی آنلاین (Live Demo)
 برای مشاهده پروژه می‌توانید از لینک زیر بازدید کنید 👇  
-🔗 [https://alimohammad86.pythonanywhere.com](https://alimohammad86.pythonanywhere.com)
+🔗 [https://mo-inoo.ir](https://mo-inoo.ir)
 
 ---
 
